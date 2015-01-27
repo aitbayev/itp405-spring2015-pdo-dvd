@@ -33,12 +33,24 @@ $statement = $pdo->prepare($sql);
 $statement->execute();
 $results = $statement->fetchAll(PDO::FETCH_OBJ);
 echo "All movies with '" .$rating . "' rating: ";
+
 ?>
+<table>
+    <tr>
+        <td><strong> Title </strong></td>
+        <td><strong> Genre </strong></td>
+        <td><strong> Format</strong></td>
+    </tr>
+
+
 
 <?php foreach($results as $result) : ?>
 
-        <?php echo "<p> <strong>" .$result->title."</p> </strong>"?>
-        <p>Genre: <?php echo $result->genre_name ?></p>
-        <p>Format: <?php echo $result->format_name ?></p>
+    <tr>
+        <td><?php echo $result->title ?> </td>
+        <td><?php echo $result->genre_name ?> </td>
+        <td><?php echo $result->format_name ?> </td>
+    </tr>
 
 <?php endforeach; ?>
+</table>

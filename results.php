@@ -15,35 +15,49 @@ $dvd_title = $_GET['dvd_title'];
 
 $pdo = new PDO("mysql:host=$host;dbname=$dbname", $user, $pass);
 
-echo "You searched for '" .$_GET['dvd_title'] . "'";
+echo "You searched for '" .$_GET['dvd_title'] . "' </br>";
 
 $sql = "
-  SELECT title, genre, format, rating
-  FROM dvds, genres, formats, ratings
-  INNER JOIN genres
-  ON dvds.genre_id= genres.id
-  INNER JOIN formats
-  ON dvds.format_id= formats.id
-  INNER JOIN ratings
-  ON dvds.rating_id = ratings.id;
-  WHERE title LIKE ?
+ SELECT title, rating_name, format_name, genre_name
+ FROM dvds
+ INNER JOIN genres
+ ON dvds.genre_id = genres.id
+ INNER JOIN formats
+ ON dvds.format_id = formats.id
+ INNER JOIN ratings
+ ON dvds.rating_id = ratings.id
+ WHERE title LIKE ?
 ";
 
+
 $statement = $pdo->prepare($sql);
-$like = '%'.$dvd_title.'%';
+$like = '%' . $dvd_title . '%';
 $statement->bindParam(1, $like);
 
 
 $statement->execute();
 $dvds = $statement->fetchAll(PDO::FETCH_OBJ);
+
+if( empty($dvds)){
+    echo " <p> No results found for <a href = 'search.php'> Search page </a> </p>";
+}
 ?>
 
-<?php foreach($dvds as $dvd) : ?>
-    <h3>
-        <?php echo $dvd->title ?>
+<table>
 
-    </h3>
-    <p>Genre: <?php echo $dvd->genre ?></p>
-    <p>Format: <?php echo $dvd->format ?></p>
-    <p>Rating: <?php echo $dvd->rating ?></p>
+<tr>
+    <td><strong> Title </strong></td>
+    <td><strong> Genre </strong></td>
+    <td><strong> Format</strong></td>
+    <td><strong> Rating</strong></td>
+
+</tr>
+<?php foreach($dvds as $dvd) : ?>
+<tr>
+    <td><?php echo $dvd->title ?> </td>
+    <td><?php echo $dvd->genre_name ?> </td>
+    <td><?php echo $dvd->format_name ?> </td>
+    <td><a href="ratings.php?rating=<?php echo $dvd->rating_name ?>"> <?php echo $dvd->rating_name ?></a></td>
+</tr>
 <?php endforeach; ?>
+</table>
